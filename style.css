@@ -1,0 +1,26 @@
+body, html {
+    height: 100%;
+    background-color: #555;
+  }
+header img {
+    float: left;
+    width: 100px;
+    height: 100px;
+    background: #555;
+  }
+  
+  .header h1 {
+    position: relative;
+    top: 18px;
+    left: 10px;
+  }
+  .bgimage{
+    background-image: url('Image/ProjectLogo.png');
+    /* Full height */
+  height: 100%;
+
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  }
