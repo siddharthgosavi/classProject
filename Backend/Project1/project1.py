@@ -1,7 +1,9 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+from tkinter import filedialog,Button
 import csv
 
+global FILEPATH
 class DataStorage:
     def __init__(self):
         self.data_sets = {}
@@ -141,9 +143,6 @@ class GUI(tk.Tk):
         # Display success message
         messagebox.showinfo("Success", f"Orders added successfully with ID: {unique_id}")
 
-        # Close the add Orders window
-        window.destroy()
-
     def show_delete_orders_window(self):
         delete_orders_window = tk.Toplevel(self)
         delete_orders_window.title("Delete Orders")
@@ -192,31 +191,65 @@ class GUI(tk.Tk):
             orderss_text.insert(tk.END, f"TotalAmount: {details['totalAmount']}\n")
             orderss_text.insert(tk.END, f"ShippingAddress: {details['shippingAddress']}\n\n")
 
+def browseFiles():
+    global FILEPATH
+    FILEPATH = filedialog.askopenfilename(initialdir = "/",
+                                        title = "Select CSV a File",
+                                        filetypes=[("CSV files", "*.csv")])
+    window.destroy()
+
+def exitWindow():
+    window.destroy()
+
 if __name__ == "__main__":
     # Example usage:
+    # Function for opening the 
+    # file explorer window
+                                                                                
+    # Create the root window
+    window = tk.Tk()
+    # Set window title
+    window.title('File Explorer')
+    # Set window size
+    window.geometry("500x500")
+    #Set window background color
+    window.config(background = "white")
+    button_explore = Button(window, 
+                            text = "Browse CSV Files",
+                            command = browseFiles) 
+    button_exit = Button(window, 
+                        text = "Exit",
+                        command = exitWindow) 
 
-    # Read and Parse CSV Files
-    with open('orders.csv', 'r') as orders_file:
-        orders_data = list(csv.reader(orders_file))
+    # Grid method is chosen for placing
+    # the widgets at respective positions 
+    # in a table like structure by
+    # specifying rows and columns
+    button_explore.grid(column = 1, row = 2)
+    button_exit.grid(column = 1,row = 3)
+    window.mainloop()
 
-    with open('orders.csv', 'r') as order_details_file:
-        order_details_data = list(csv.reader(order_details_file))
+    try:
+        # Read and Parse CSV Files
+        with open(FILEPATH, 'r') as order_details_file:
+            order_details_data = list(csv.reader(order_details_file))
+        # Store the data in an appropriate data structure
+        data_storage = DataStorage()
+        data_storage.add_data_set('orders', [])
+        data_storage.add_data_set('order_details', [])
 
-    # Store the data in an appropriate data structure
-    data_storage = DataStorage()
-    data_storage.add_data_set('orders', [])
-    data_storage.add_data_set('order_details', [])
+        # Create and add some sample orderss to the Orders Database
+        orders_db = OrdersDatabase()
+        for order in order_details_data:
+            print(order)
+            orders_db.add_orders(order[1],order[2],order[3],order[4],order[5],order[6],order[7])
 
-    # Create and add some sample orderss to the Orders Database
-    orders_db = OrdersDatabase()
-    for order in order_details_data:
-        print(order)
-        orders_db.add_orders(order[1],order[2],order[3],order[4],order[5],order[6],order[7])
-
-    # Create and run the GUI
-    app = GUI(data_storage, orders_db)
-    app.title("Software Engineering Project 1")
-    app.configure(background="aquamarine")
-    app.resizable(width=False, height=False)
-    app.geometry("568x568+0+0")
-    app.mainloop()
+        # Create and run the GUI
+        app = GUI(data_storage, orders_db)
+        app.title("Software Engineering Project 1")
+        app.configure(background="aquamarine")
+        app.resizable(width=False, height=False)
+        app.geometry("568x568+0+0")
+        app.mainloop()
+    except:
+        print("You exited!!")
